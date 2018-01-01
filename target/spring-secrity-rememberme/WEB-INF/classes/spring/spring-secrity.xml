@@ -1,0 +1,47 @@
+<!--场景：-->
+<!--http://localhost:8080/j_spring_security_check-->
+<!--使用spring-security框架，自定义login页面时，发现上面的请求404-->
+<!--原因：-->
+
+<!--spring-security的版本问题，spring-security4.x版本，若需要自定义login页面时，需要自定login-processing-url=“/j_spring_security_check”-->
+<!--spring-security3.x版本，不需要手动加-->
+<!--解决：-->
+
+<!--application-security.xml中加login-processing-url=“/j_spring_security_check”-->
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+    <http auto-config="true">
+        <intercept-url pattern="/" access="permitAll"/>
+        <intercept-url pattern="/home" access="permitAll"/>
+        <intercept-url pattern="/admin**" access="hasRole('ADMIN')"/>
+        <intercept-url pattern="/dba**" access="hasRole('ADMIN') and hasRole('DBA')"/>
+        <form-login login-page="/login"
+                    username-parameter="ssoId"
+                    password-parameter="password"
+                    authentication-failure-url="/Access_Denied"
+                    />
+        <csrf/>
+
+        <remember-me
+                remember-me-parameter="remember-me"
+                remember-me-cookie="remember-me"
+                token-validity-seconds="86400"
+                data-source-ref="dataSource" />
+    </http>
+
+    <authentication-manager >
+        <authentication-provider user-service-ref="customUserDetailsService">
+
+        </authentication-provider>
+
+    </authentication-manager>
+
+
+    <beans:bean id="customUserDetailsService" class="com.anlu.secrity.service.impl.CustomUserDetailsService" />
+
+</beans:beans>
