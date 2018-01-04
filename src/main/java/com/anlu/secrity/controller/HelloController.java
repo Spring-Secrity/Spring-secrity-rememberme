@@ -36,7 +36,7 @@ public class HelloController {
         return "admin";
     }
 
-    @RequestMapping(value = "/db", method = RequestMethod.GET)
+    @RequestMapping(value = "/dba", method = RequestMethod.GET)
     public String dbaPage(ModelMap model) {
         model.addAttribute("user", getPrincipal());
         return "dba";
